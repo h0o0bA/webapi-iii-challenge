@@ -26,11 +26,38 @@ router.post("/:id/posts", validateUserId, validateUser, (req, res) => {
     });
 });
 
-router.get("/", (req, res) => {});
+router.get("/", (req, res) => {
+  usersDb
+    .get()
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
 
-router.get("/:id", (req, res) => {});
+router.get("/:id", validateUserId, (req, res) => {
+  //  console.log('in get: ', req.user); // { id: 6, name: 'Boromir' }
+  res.status(200).json(req.user);
+});
 
-router.get("/:id/posts", (req, res) => {});
+router.get("/:id/posts", validateUserId, (req, res) => {
+  usersDb
+    .getUserPosts(req.params.id)
+    .then(userPosts => {
+      if (userPosts.length > 0) {
+        res.status(200).json(userPosts);
+      } else {
+        res
+          .status(404)
+          .json({ message: "there are no any posts for the specified id" });
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
 
 router.delete("/:id", (req, res) => {});
 
