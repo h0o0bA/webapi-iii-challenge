@@ -59,9 +59,27 @@ router.get("/:id/posts", validateUserId, (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", validateUserId, (req, res) => {
+  usersDb
+    .remove(req.params.id)
+    .then(user => {
+      res.status(200).json({ message: "The user has been deleted" });
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", validateUserId, validateUser, (req, res) => {
+  usersDb
+    .update(req.params.id, req.body)
+    .then(user => {
+      res.status(201).json(user);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
 
 //custom middleware
 
